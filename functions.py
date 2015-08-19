@@ -9,12 +9,14 @@ def fibonacci(n=5) : # write Fibonacci series up to n
         a, b = b, a + b
     return result
 
+# test
+'''
 fib = fibonacci(10)
 print fib
 
 fib = fibonacci()
 print fib
-
+'''
 
 def doc_function() :
     """Do nothing, but document it.
@@ -23,4 +25,7 @@ def doc_function() :
     """
     pass
 
+# test
+'''
 print doc_function.__doc__
+'''
