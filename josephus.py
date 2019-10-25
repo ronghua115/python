@@ -44,6 +44,6 @@ first = Person(1)
 last = first.createChain(n-1)
 last.succ = first
 
-print "In a circle of %d people, killing number %d" % (n,m)
+print("In a circle of %d people, killing number %d" % (n, m))
 winner = first.kill(1,m,n)
-print "Winner: ", winner
+print("Winner: ", winner)
