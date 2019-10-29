@@ -1,36 +1,32 @@
-from datetime import datetime
 from datetime import timedelta
-
+import datetime
 import pyodbc
+import argparse
 
-conn = pyodbc.connect('DRIVER={SQL Server};'
-                      'SERVER=192.168.88.164\ECMDB_MSRFT;'
-                      'PORT=1433;'
-                      'DATABASE=NEURONSim;'
-                      'UID=objown;'
-                      'PWD=optimal123')
+
+parser = argparse.ArgumentParser()
+parser.add_argument("file_name", help="parse a geo location file", type=str)
+args = parser.parse_args()
+
+'''
+/usr/bin/python3.6 /home/ronghua/PycharmProjects/python/parse_geo_file.py geo_file
+'''
+server = '192.168.88.164\ECMDB_MSRFT'
+database = 'NEURONSim'
+username = 'objown'
+password = 'optimal123'
+conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 cursor = conn.cursor()
 
-timestamp = datetime.fromisoformat('2019-09-30 00:00:00')
+timestamp_str = '2019-09-30 00:00:00'
+timestamp = datetime.datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
 systemid = 2
 remoteid = 'remoteid_1234'
 timespan = 6  # minute
 altitude = '100.00'
-'''
-latitude = '12.001'
-longitude = '23.998'
-latitudedir = 'S'
-longitudedir = 'W'
-altitude = '100.00'
 
-cursor.execute("INSERT INTO [NEURONSim].[dbo].[RemoteLocation]([Timestamp], [SystemId], [RemoteId], [Latitude], [Longitude], [LatDirection], [LongDirection], [Altitude]) \
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?)", timestamp, systemid, remoteid, latitude, longitude, latitudedir, longitudedir, altitude)
-conn.commit()
-'''
-# print('begin-----------')
-filepath = 'geo_file'
 try:
-    fp = open(filepath, encoding='utf-8')
+    fp = open(args.file_name, encoding='utf-8')
     line = fp.readline()
     cnt = 1
     while line:
@@ -54,8 +50,7 @@ try:
             longitude_minutes_index = longitude.index("'")
             longitude_minutes = longitude[longitude_degree_index + 1:longitude_minutes_index]
             longitude_seconds = longitude[longitude_minutes_index + 1:-1]
-            longitude_decimal = format(
-                float(longitude_degree) + float(longitude_minutes) / 60 + float(longitude_seconds) / 3600, '.6f')
+            longitude_decimal = format(float(longitude_degree) + float(longitude_minutes) / 60 + float(longitude_seconds) / 3600, '.6f')
             print(f'{latitude_direction},{latitude_decimal} : {longitude_direction},{longitude_decimal}')
             #            cursor.execute("INSERT INTO [NEURONSim].[dbo].[RemoteLocation]
             #                           ([Timestamp], [SystemId], [RemoteId], [Latitude], [Longitude], [LatDirection], [LongDirection], [Altitude]) \
@@ -67,4 +62,3 @@ try:
         cnt += 1
 finally:
     fp.close()
-# print('-----------end')
