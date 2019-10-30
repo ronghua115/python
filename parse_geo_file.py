@@ -1,34 +1,45 @@
-from datetime import timedelta
-import datetime
-import pyodbc
 import argparse
+import datetime
+import json
+import os
+from datetime import timedelta
 
+import pyodbc
 
 parser = argparse.ArgumentParser()
-parser.add_argument("system_id", help="system id", type=int)
-parser.add_argument("remote_id", help="remote id", type=str)
-parser.add_argument("file_name", help="parse a geo location file", type=str)
+parser.add_argument("config_file", help="configuration file of geo location data", type=str)
 args = parser.parse_args()
 
-'''
-/usr/bin/python3.6 /home/ronghua/PycharmProjects/python/parse_geo_file.py 2 remote_id1 geo_data
-'''
-server = '192.168.88.164\ECMDB_MSRFT'
-database = 'NEURONSim'
-username = 'objown'
-password = 'optimal123'
-conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
-cursor = conn.cursor()
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+config_file = os.path.join(__location__, args.config_file)
 
-time_stamp_str = '2019-09-30 00:00:00'
+# parse configuration file
+with open(config_file, "r") as config_data:
+    all_info = json.load(config_data)
+
+# sql server info
+server = all_info['odbc']['server']
+database = all_info['odbc']['database']
+username = all_info['odbc']['username']
+password = all_info['odbc']['password']
+
+# geo data file
+file_name = os.path.join(__location__ + "/datafile", all_info['remote']['geo_data_name'])
+
+# remote info
+time_stamp_str = all_info['remote']['time_stamp']
 time_stamp = datetime.datetime.strptime(time_stamp_str, '%Y-%m-%d %H:%M:%S')
-system_id = args.system_id
-remote_id = args.remote_id
+system_id = all_info['remote']['system_id']  # args.system_id
+remote_id = all_info['remote']['remote_id']  # args.remote_id
 time_span = 6  # minute
 altitude = '100.00'
 
+conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database + \
+                      ';UID=' + username + ';PWD=' + password)
+cursor = conn.cursor()
+
 try:
-    fp = open(args.file_name, 'r', encoding='utf-8')
+    fp = open(file_name, 'r', encoding='utf-8')
     for line in fp:
         if not line.strip() or line.startswith('#'):
             continue

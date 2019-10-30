@@ -1,0 +1,14 @@
+{
+  "odbc": {
+    "server": "192.168.88.164\\ECMDB_MSRFT",
+    "database": "NEURONSim",
+    "username": "objown",
+    "password": "optimal123"
+  },
+  "remote": {
+    "time_stamp": "2019-09-30 00:00:00",
+    "system_id": 2,
+    "remote_id": "remote_id_1",
+    "geo_data_name": "geo_data"
+  }
+}
