@@ -1,24 +1,36 @@
 {
-  "odbc": {
-    "server": "192.168.88.164\\ECMDB_MSRFT",
-    "database": "NEURONSim",
-    "username": "objown",
-    "password": "optimal123"
+  "description" : "parses geo location data and saves into MS SQL database",
+  "odbc" : {
+    "server" : "192.168.88.164\\ECMDB_MSRFT",
+    "database" : "NEURONSim",
+    "username" : "objown",
+    "password" : "optimal123"
   },
+  "datafile_location" : "datafile",
   "remotes" : [
     {
-      "geo_data_name": "geo_data_1",
-      "time_stamp": "2019-09-01 00:00:00",
-      "system_id": 2,
-      "remote_id": "remote_id_1",
-      "geo_freq" : 360
+      "geo_data_name" : "geo_data_1",
+      "start_date" : "2019-09-01",
+      "duration_day" : 30,
+      "system_id" : 2,
+      "remote_id" : "remote_id_1",
+      "geo_freq_seconds" : 360
     },
     {
-      "geo_data_name": "geo_data_2",
-      "time_stamp": "2019-09-02 00:00:00",
-      "system_id": 2,
-      "remote_id": "remote_id_2",
-      "geo_freq" : 360
+      "geo_data_name" : "geo_data_2",
+      "start_date" : "2019-09-01",
+      "duration_day" : 30,
+      "system_id" : 2,
+      "remote_id" : "remote_id_2",
+      "geo_freq_seconds" : 360
+    },
+    {
+      "geo_data_name" : "geo_data_3",
+      "start_date" : "2019-09-01",
+      "duration_day" : 30,
+      "system_id" : 2,
+      "remote_id" : "remote_id_3",
+      "geo_freq_seconds" : 360
     }
   ]
 }
