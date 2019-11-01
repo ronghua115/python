@@ -6,7 +6,7 @@ import neuronsim
 
 def main():
     parser = argparse.ArgumentParser(description='Generate remote simulation location data.')
-    parser.add_argument("config_file", type=str, default="geo_config.json",
+    parser.add_argument("config_file", nargs='?', default="geo_config.json", type=str,
                         help="configuration file of geo location data")
     args = parser.parse_args()
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
