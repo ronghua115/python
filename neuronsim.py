@@ -25,7 +25,7 @@ class GeoInfo:
     def __del__(self):
         self.conn.close()
 
-    def query_remotes(self):
+    def __query_remotes(self):
         # count number of geo data files
         datafile_number = 0
         datafile_location = self.geo_config['datafile_location']
@@ -53,6 +53,7 @@ class GeoInfo:
         remote_info = self.geo_config["remote"]
         cursor = self.conn.cursor()
         remote_index = 0
+        self.__query_remotes()
         while remote_index < len(self.remotes):
             # remote info
             time_stamp_str = remote_info['start_date']
