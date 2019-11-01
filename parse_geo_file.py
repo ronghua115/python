@@ -87,13 +87,13 @@ for remote in remotes:
         latitude_direction = geo_data[geo_data_index][2]
         longitude_direction = geo_data[geo_data_index][3]
         altitude = random.uniform(33000, 42000)  # feet
-        # print(f'{time_stamp}, {system_id}, {remote_id}: {latitude_decimal}{latitude_direction}, {longitude_decimal}{longitude_direction}')
+        print(f'{time_stamp}, {system_id}, {remote_id}: {latitude_decimal}{latitude_direction}, {longitude_decimal}{longitude_direction}, {altitude}')
         # insert one record into database
-        cursor.execute("INSERT INTO [NEURONSim].[dbo].[RemoteLocation]([Timestamp], [SystemId], [RemoteId], [Latitude],\
-                        [Longitude], [LatDirection], [LongDirection], [Altitude]) VALUES(?, ?, ?, ?, ?, ?, ?, ?)",\
-                        time_stamp, system_id, remote_id, latitude_decimal, longitude_decimal, latitude_direction,\
-                        longitude_direction, altitude)
-        conn.commit()
+        # cursor.execute("INSERT INTO [NEURONSim].[dbo].[RemoteLocation]([Timestamp], [SystemId], [RemoteId], [Latitude],\
+        #                [Longitude], [LatDirection], [LongDirection], [Altitude]) VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+        #                time_stamp, system_id, remote_id, latitude_decimal, longitude_decimal, latitude_direction,
+        #                longitude_direction, altitude)
+        # conn.commit()
 
         if geo_data_direction == 'f':
             geo_data_index += 1
