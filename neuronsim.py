@@ -25,14 +25,25 @@ class GeoInfo:
     def __del__(self):
         self.conn.close()
 
-    def __query_remotes(self):
+    def __query_remotes(self) -> None:
         # count number of geo data files
         datafile_number = 0
+        # put excluded geo data files into list
+        files_excluded = self.geo_config['datafile_startswith']['excluded']
+        files_excluded = [self.geo_config['datafile_startswith']['name'] +
+                          file_excluded for file_excluded in files_excluded]
+        # put excluded remotes into list
+        remotes_excluded = ""
+        for remote_excluded in self.geo_config['remote']['excluded']:
+            remotes_excluded += "'" + remote_excluded + "', "
+        remotes_excluded = remotes_excluded[:-2]
+        # retrieve geo data files from local
         datafile_location = self.geo_config['datafile_location']
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
         geo_data_file_path = os.path.join(__location__, datafile_location)
         for file in os.listdir(geo_data_file_path):
-            if file.startswith(self.geo_config['datafile_startswith']):
+            if file.startswith(self.geo_config['datafile_startswith']['name']) and \
+                    file not in files_excluded:
                 datafile_number += 1
                 # geo data file with absolute path
                 file_name = os.path.join(__location__ + "/" + datafile_location, file)
@@ -40,7 +51,8 @@ class GeoInfo:
         # retrieve remotes info from database
         cursor = self.conn.cursor()
         database = self.geo_config['odbc']['database']
-        cursor.execute(f'SELECT TOP ({datafile_number}) [RemoteId] FROM [{database}].[dbo].[RemoteConfigCurrent]')
+        cursor.execute(f'SELECT TOP ({datafile_number}) [RemoteId] FROM [{database}].[dbo].[RemoteConfigCurrent]'
+                       f'WHERE [RemoteId] NOT IN ({remotes_excluded})')
         rows = cursor.fetchall()
         # close cursor
         cursor.close()
@@ -49,7 +61,12 @@ class GeoInfo:
         # self.remotes.sort()
         # self.data_files.sort()
 
-    def parse_insert(self):
+    def print_remotes_datafiles(self) -> None:
+        self.__query_remotes()
+        print(f"remotes: {self.remotes}")
+        print(f"datafiles: {self.data_files}")
+
+    def parse_insert(self) -> None:
         remote_info = self.geo_config["remote"]
         cursor = self.conn.cursor()
         remote_index = 0
