@@ -15,6 +15,7 @@ def main():
         config_json = json.load(config_data)
     geo_info_test = neuronsim.GeoInfo(config_json)
     # geo_info_test.print_remotes_datafiles()
+    # geo_info_test.parse_csv(location_csv)
     geo_info_test.parse_insert()
 
 
