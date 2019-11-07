@@ -14,9 +14,11 @@ def main():
     with open(config_file, "r") as config_data:
         config_json = json.load(config_data)
     geo_info_test = neuronsim.GeoInfo(config_json)
-    # geo_info_test.print_remotes_datafiles()
-    # geo_info_test.parse_csv(location_csv)
-    geo_info_test.parse_insert()
+    geo_info_test.print_remotes_datafiles()
+    location_csv = 'location_data'
+    geo_info_test.parse_csv(location_csv)
+    geo_info_test.insert_csv(location_csv)
+    # geo_info_test.parse_insert()
 
 
 if __name__ == "__main__":

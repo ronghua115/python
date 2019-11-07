@@ -4,7 +4,10 @@ import os
 from datetime import timedelta
 import pyodbc
 import random
-import uuid
+import pandas as pd
+from sqlalchemy import create_engine
+from urllib.parse import quote_plus
+import time
 
 
 class GeoInfo:
@@ -20,6 +23,12 @@ class GeoInfo:
         conn_str = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database +\
                    ';UID=' + username + ';PWD=' + password
         self.conn = pyodbc.connect(conn_str)
+        # query remotes and geo data files
+        self.__query_remotes()
+        # pandas engine for bulk data insertion
+        quoted = quote_plus(conn_str)
+        new_con = 'mssql+pyodbc:///?odbc_connect={}'.format(quoted)
+        self.engine = create_engine(new_con, fast_executemany=True)
 
     def __del__(self):
         self.conn.close()
@@ -61,8 +70,6 @@ class GeoInfo:
         # self.data_files.sort()
 
     def print_remotes_datafiles(self) -> None:
-        if len(self.data_files) == 0 or len(self.remotes) == 0:
-            self.__query_remotes()
         print(f"remotes: {self.remotes}")
         print(f"datafiles: {self.data_files}")
 
@@ -76,7 +83,6 @@ class GeoInfo:
         csvfile = open(csv_file, 'a')
         remote_info = self.geo_config["remote"]
         remote_index = 0
-        self.__query_remotes()
         while remote_index < len(self.remotes):
             # remote info
             time_stamp_str = remote_info['start_date']
@@ -121,7 +127,6 @@ class GeoInfo:
             # initial direction to travel geo data list is from beginning to ending
             geo_data_direction = 'f'
             while time_stamp < time_stamp_end:
-                entity_id = uuid.uuid1()
                 latitude_decimal = geo_data[geo_data_index][0]
                 longitude_decimal = geo_data[geo_data_index][1]
                 latitude_direction = geo_data[geo_data_index][2]
@@ -131,9 +136,9 @@ class GeoInfo:
                 # print(f'{time_stamp}, {system_id}, {remote_id}: {latitude_decimal}{latitude_direction},'
                 #       f'{longitude_decimal}{longitude_direction}, {altitude}')
                 # insert one record into csv file
-                location_data = '%s,%s,%i,%s,%s,%s,%s,%s,%s\n' % (entity_id, time_stamp, system_id, remote_id,
-                                                                  latitude_decimal, longitude_decimal,
-                                                                  latitude_direction, longitude_direction, altitude)
+                location_data = '%s,%i,%s,%s,%s,%s,%s,%s\n' % (time_stamp, system_id, remote_id, latitude_decimal,
+                                                               longitude_decimal, latitude_direction,
+                                                               longitude_direction, altitude)
                 csvfile.write(location_data)
                 # travel geo data list forwards
                 if geo_data_direction == 'f':
@@ -157,6 +162,18 @@ class GeoInfo:
             remote_index += 1
         # close file
         csvfile.close()
+
+    def insert_csv(self, csv_file: str) -> None:
+        df = pd.read_csv(csv_file,
+                         names=['Timestamp', 'SystemId', 'RemoteId', 'Latitude', 'Longitude', 'LatDirection',
+                                'LongDirection', 'Altitude'],
+                         parse_dates=['Timestamp'],
+                         dtype={'SystemId': int, 'RemoteId': str, 'Latitude': str, 'Longitude': str,
+                                'LatDirection': str, 'LongDirection': str, 'Altitude': float},
+                         index_col=False)
+        s = time.time()
+        df.to_sql("RemoteLocation", self.engine, if_exists='append', chunksize=None, index=False)
+        print('execution time: {}'.format(time.time() - s))
 
     def parse_insert(self) -> None:
         remote_info = self.geo_config["remote"]
