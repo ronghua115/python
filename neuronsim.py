@@ -37,8 +37,8 @@ class GeoInfo:
         # count number of geo data files
         datafile_number = 0
         # put excluded geo data files into list
-        files_excluded = self.geo_config['datafile_startswith']['excluded']
-        files_excluded = [self.geo_config['datafile_startswith']['name'] +
+        files_excluded = self.geo_config['datafile']['startswith']['excluded']
+        files_excluded = [self.geo_config['datafile']['startswith']['name'] +
                           file_excluded for file_excluded in files_excluded]
         # put excluded remotes into list
         remotes_excluded = ""
@@ -46,20 +46,21 @@ class GeoInfo:
             remotes_excluded += "'" + remote_excluded + "', "
         remotes_excluded = remotes_excluded[:-2]
         # retrieve geo data files from local
-        datafile_location = self.geo_config['datafile_location']
+        datafile_location = self.geo_config['datafile']['location']
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
         geo_data_file_path = os.path.join(__location__, datafile_location)
         for file in os.listdir(geo_data_file_path):
-            if file.startswith(self.geo_config['datafile_startswith']['name']) and \
-                    file not in files_excluded:
+            if file.startswith(self.geo_config['datafile']['startswith']['name']) and file not in files_excluded:
                 datafile_number += 1
                 # geo data file with absolute path
                 file_name = os.path.join(__location__ + "/" + datafile_location, file)
                 self.data_files.append(file_name)
         # retrieve remotes info from database
         cursor = self.conn.cursor()
+        schema = self.geo_config['odbc']['schema']
         database = self.geo_config['odbc']['database']
-        cursor.execute(f'SELECT TOP ({datafile_number}) [RemoteId] FROM [{database}].[dbo].[RemoteConfigCurrent]'
+        remote_config_table = self.geo_config['odbc']['tables']['config']
+        cursor.execute(f'SELECT TOP ({datafile_number}) [RemoteId] FROM [{database}].[{schema}].[{remote_config_table}]'
                        f'WHERE [RemoteId] NOT IN ({remotes_excluded})')
         rows = cursor.fetchall()
         # close cursor
@@ -171,8 +172,9 @@ class GeoInfo:
                          dtype={'SystemId': int, 'RemoteId': str, 'Latitude': str, 'Longitude': str,
                                 'LatDirection': str, 'LongDirection': str, 'Altitude': float},
                          index_col=False)
+        remote_location_table = self.geo_config['odbc']['tables']['location']
         s = time.time()
-        df.to_sql("RemoteLocation", self.engine, if_exists='append', chunksize=None, index=False)
+        df.to_sql(remote_location_table, self.engine, if_exists='append', chunksize=None, index=False)
         print('execution time: {}'.format(time.time() - s))
 
     def parse_insert(self) -> None:
