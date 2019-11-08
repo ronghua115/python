@@ -78,12 +78,8 @@ class GeoInfo:
     def update_config(config_file: str, remotes: list, data_files: list) -> None:
         with open(config_file, "r") as config_data:
             config_json = json.load(config_data)
-        datafile_location = config_json['datafile']['location']
-        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-        geo_data_file = os.path.join(__location__, datafile_location) + '/' + \
-                        config_json['datafile']['startswith']['name']
         for data_file in data_files:
-            config_json['datafile']['startswith']['excluded'].append(data_file[len(geo_data_file):])
+            config_json['datafile']['startswith']['excluded'].append(data_file[data_file.rfind('_') + 1:])
         for remote in remotes:
             config_json['remote']['excluded'].append(remote)
         with open(config_file, 'w') as new_data_file:
