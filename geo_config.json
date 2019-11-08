@@ -1,20 +1,20 @@
 {
-  "odbc" : {
-    "server" : "192.168.88.164\\ECMDB_MSRFT",
-    "database" : "NEURONSim",
-    "username" : "objown",
-    "password" : "optimal123",
-    "schema" : "dbo",
-    "tables" : {
-      "config" : "RemoteConfigCurrent",
-      "location" : "RemoteLocation"
+  "odbc": {
+    "server": "192.168.88.164\\ECMDB_MSRFT",
+    "database": "NEURONSim",
+    "username": "objown",
+    "password": "optimal123",
+    "schema": "dbo",
+    "tables": {
+      "config": "RemoteConfigCurrent",
+      "location": "RemoteLocation"
     }
   },
-  "datafile" : {
-    "location" : "datafile",
-    "startswith" : {
-      "name" : "geo_data_",
-      "excluded" : [
+  "datafile": {
+    "location": "datafile",
+    "startswith": {
+      "name": "geo_data_",
+      "excluded": [
         "000",
         "001",
         "002",
@@ -47,49 +47,53 @@
         "029",
         "030",
         "031",
-        "032"
+        "032",
+        "034",
+        "033"
       ]
     }
   },
-  "remote" : {
-      "start_date" : "2019-10-01",
-      "duration_day" : 31,
-      "system_id" : 2,
-      "geo_freq_seconds" : 360,
-      "excluded" : [
-        "RemoteId_818993994",
-        "RemoteId_1456425214",
-        "RemoteId_893193999",
-        "RemoteId_1469429561",
-        "RemoteId_2138690208",
-        "RemoteId_1318462286",
-        "RemoteId_1244172761",
-        "RemoteId_712479019",
-        "RemoteId_1958189370",
-        "RemoteId_323771658",
-        "RemoteId_1721647696",
-        "RemoteId_1645585354",
-        "RemoteId_914711866",
-        "RemoteId_1504897512",
-        "RemoteId_460344705",
-        "RemoteId_1853307243",
-        "RemoteId_1943369942",
-        "RemoteId_142089308",
-        "RemoteId_1494273766",
-        "RemoteId_1935527459",
-        "RemoteId_2109665728",
-        "RemoteId_1756306449",
-        "RemoteId_1198480319",
-        "RemoteId_1208061405",
-        "RemoteId_349513176",
-        "RemoteId_1864159524",
-        "RemoteId_95852270",
-        "RemoteId_2143439426",
-        "RemoteId_1518322504",
-        "RemoteId_698858909",
-        "RemoteId_525292810",
-        "RemoteId_350430744",
-        "RemoteId_471052075"
-      ]
-   }
+  "remote": {
+    "start_date": "2019-10-01",
+    "duration_day": 31,
+    "system_id": 2,
+    "geo_freq_seconds": 360,
+    "excluded": [
+      "RemoteId_818993994",
+      "RemoteId_1456425214",
+      "RemoteId_893193999",
+      "RemoteId_1469429561",
+      "RemoteId_2138690208",
+      "RemoteId_1318462286",
+      "RemoteId_1244172761",
+      "RemoteId_712479019",
+      "RemoteId_1958189370",
+      "RemoteId_323771658",
+      "RemoteId_1721647696",
+      "RemoteId_1645585354",
+      "RemoteId_914711866",
+      "RemoteId_1504897512",
+      "RemoteId_460344705",
+      "RemoteId_1853307243",
+      "RemoteId_1943369942",
+      "RemoteId_142089308",
+      "RemoteId_1494273766",
+      "RemoteId_1935527459",
+      "RemoteId_2109665728",
+      "RemoteId_1756306449",
+      "RemoteId_1198480319",
+      "RemoteId_1208061405",
+      "RemoteId_349513176",
+      "RemoteId_1864159524",
+      "RemoteId_95852270",
+      "RemoteId_2143439426",
+      "RemoteId_1518322504",
+      "RemoteId_698858909",
+      "RemoteId_525292810",
+      "RemoteId_350430744",
+      "RemoteId_471052075",
+      "RemoteId_1702094304",
+      "RemoteId_2082271868"
+    ]
+  }
 }

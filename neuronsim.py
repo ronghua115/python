@@ -11,8 +11,11 @@ import time
 
 
 class GeoInfo:
-    def __init__(self, geo_config: json):
-        self.geo_config = geo_config
+    def __init__(self, config_file: str):
+        self.config_file = config_file
+        with open(self.config_file, "r") as config_data:
+            config_json = json.load(config_data)
+        self.geo_config = config_json
         self.remotes = []
         self.data_files = []
         # retrieve database info
@@ -20,7 +23,7 @@ class GeoInfo:
         database = self.geo_config['odbc']['database']
         username = self.geo_config['odbc']['username']
         password = self.geo_config['odbc']['password']
-        conn_str = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database +\
+        conn_str = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database + \
                    ';UID=' + username + ';PWD=' + password
         self.conn = pyodbc.connect(conn_str)
         # query remotes and geo data files
@@ -69,6 +72,22 @@ class GeoInfo:
             self.remotes.append(row[0])
         # self.remotes.sort()
         # self.data_files.sort()
+
+    # update config file on the disk with excluded remotes and data files
+    @staticmethod
+    def update_config(config_file: str, remotes: list, data_files: list) -> None:
+        with open(config_file, "r") as config_data:
+            config_json = json.load(config_data)
+        datafile_location = config_json['datafile']['location']
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        geo_data_file = os.path.join(__location__, datafile_location) + '/' + \
+                        config_json['datafile']['startswith']['name']
+        for data_file in data_files:
+            config_json['datafile']['startswith']['excluded'].append(data_file[len(geo_data_file):])
+        for remote in remotes:
+            config_json['remote']['excluded'].append(remote)
+        with open(config_file, 'w') as new_data_file:
+            json.dump(config_json, new_data_file, indent=2)
 
     def print_remotes_datafiles(self) -> None:
         print(f"remotes: {self.remotes}")
@@ -176,6 +195,8 @@ class GeoInfo:
         s = time.time()
         df.to_sql(remote_location_table, self.engine, if_exists='append', chunksize=None, index=False)
         print('execution time: {}'.format(time.time() - s))
+        # put data files and remotes into excluded list in config file
+        self.update_config(self.config_file, self.remotes, self.data_files)
 
     def parse_insert(self) -> None:
         remote_info = self.geo_config["remote"]

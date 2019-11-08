@@ -11,9 +11,7 @@ def main():
     args = parser.parse_args()
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
     config_file = os.path.join(__location__, args.config_file)
-    with open(config_file, "r") as config_data:
-        config_json = json.load(config_data)
-    geo_info_test = neuronsim.GeoInfo(config_json)
+    geo_info_test = neuronsim.GeoInfo(config_file)
     geo_info_test.print_remotes_datafiles()
     location_csv = 'location_data'
     geo_info_test.parse_csv(location_csv)
