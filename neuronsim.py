@@ -37,6 +37,9 @@ class GeoInfo:
         self.conn.close()
 
     def __query_remotes(self) -> None:
+        # clear remotes and data files
+        self.remotes = []
+        self.data_files = []
         # count number of geo data files
         datafile_number = 0
         # put excluded geo data files into list
